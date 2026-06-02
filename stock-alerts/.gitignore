@@ -2,6 +2,7 @@
 .env
 .cooldowns.json
 .seen_findings.json
+.findings_tracking.json
 
 # Python
 __pycache__/

@@ -9,6 +9,9 @@ from config import load_config
 from stocks.portfolio import OWNED, WATCHLIST, ALERT_RULES
 from stocks.findings import load_findings
 from stocks.watcher import fetch_quotes
+from stocks.tracker import (update_tracking, write_scorecard, save_tracking,
+                             weekly_summary_message, should_send_weekly_summary,
+                             mark_weekly_summary_sent)
 from alerts.rules import evaluate
 from alerts.sms import send_alerts, send_notification
 
@@ -151,6 +154,21 @@ def main() -> None:
     if not quotes:
         logger.warning("No quotes returned — exiting.")
         sys.exit(0)
+
+    # Performance tracking — snapshot entry prices and update metrics
+    tracking = update_tracking(findings, quotes)
+    write_scorecard(tracking)
+    if should_send_weekly_summary(tracking):
+        send_notification(
+            config,
+            weekly_summary_message(tracking),
+            title="Bot Picks Weekly Recap",
+            priority="default",
+            tag="bar_chart",
+        )
+        tracking = mark_weekly_summary_sent(tracking)
+        logger.info("Weekly summary sent.")
+    save_tracking(tracking)
 
     alerts = evaluate(quotes, extra_watchlist=findings_watchlist)
     logger.info("%d alert(s) before cooldown.", len(alerts))
