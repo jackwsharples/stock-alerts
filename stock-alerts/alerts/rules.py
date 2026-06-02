@@ -7,7 +7,8 @@ def _pct(current: float, reference: float) -> float:
     return (current - reference) / reference * 100
 
 
-def evaluate(quotes: dict[str, dict]) -> list[dict]:
+def evaluate(quotes: dict[str, dict],
+             extra_watchlist: list[dict] | None = None) -> list[dict]:
     """
     Evaluate fetched quotes against portfolio rules.
 
@@ -21,6 +22,9 @@ def evaluate(quotes: dict[str, dict]) -> list[dict]:
         intraday_down   — owned stock down >= threshold from open
         buy_target      — watchlist stock hit buy price
         watchlist_dip   — watchlist stock down >= threshold from open
+
+    extra_watchlist: additional watchlist entries (e.g. from bot_findings).
+        Items need only "ticker"; "buy_target" and "max_buy" are optional.
     """
     threshold = ALERT_RULES.get("intraday_move_pct", 5.0)
     alerts = []
@@ -74,31 +78,36 @@ def evaluate(quotes: dict[str, dict]) -> list[dict]:
                 ),
             })
 
-    for stock in WATCHLIST:
+    all_watchlist = WATCHLIST + (extra_watchlist or [])
+    for stock in all_watchlist:
         ticker = stock["ticker"]
         if ticker not in quotes:
             continue
         price = quotes[ticker]["price"]
         open_price = quotes[ticker]["open"]
         intraday = _pct(price, open_price)
+        buy_target = stock.get("buy_target")
+        max_buy = stock.get("max_buy")
 
-        if price <= stock["buy_target"]:
+        if buy_target is not None and price <= buy_target:
+            max_str = f" (your max: ${max_buy:.2f})" if max_buy is not None else ""
             alerts.append({
                 "ticker": ticker,
                 "type": "buy_target",
                 "message": (
                     f"[BUY TARGET] {ticker} @ ${price:.2f} hit your buy target of "
-                    f"${stock['buy_target']:.2f} (your max: ${stock['max_buy']:.2f})."
+                    f"${buy_target:.2f}{max_str}."
                 ),
             })
 
         if intraday <= -threshold:
+            buy_str = f" Buy target: ${buy_target:.2f}." if buy_target is not None else ""
             alerts.append({
                 "ticker": ticker,
                 "type": "watchlist_dip",
                 "message": (
                     f"[WATCHLIST DIP {intraday:+.1f}%] {ticker} dropped from "
-                    f"${open_price:.2f} to ${price:.2f}. Buy target: ${stock['buy_target']:.2f}."
+                    f"${open_price:.2f} to ${price:.2f}.{buy_str}"
                 ),
             })
 

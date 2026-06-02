@@ -1,6 +1,7 @@
 # Secrets — never commit these
 .env
 .cooldowns.json
+.seen_findings.json
 
 # Python
 __pycache__/

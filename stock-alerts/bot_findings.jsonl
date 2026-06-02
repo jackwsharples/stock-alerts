@@ -1,0 +1,7 @@
+# SCHEMA (one JSON object per line — agent appends only, never edits existing lines):
+# {"ticker": "AAPL", "discovered": "YYYY-MM-DD", "why_buy": "reason", "source": "where flagged",
+#  "buy_target": 180.00,  <- optional, use null if no specific entry price
+#  "status": "new"}       <- "new" = not yet announced; agent always writes "new"
+#
+# DELETE this example line before going live, or the loader will skip it automatically.
+{"ticker": "EXAMPLE", "discovered": "2026-06-02", "why_buy": "This is a placeholder — delete or ignore it.", "source": "example", "buy_target": null, "status": "new"}
