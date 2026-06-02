@@ -69,7 +69,7 @@ WATCHLIST = [
 # Alert behaviour (applies to all stocks above)
 ALERT_RULES = {
     # Fire an intraday alert if price moves +/- this % from today's open
-    "intraday_move_pct": 5.0,
+    "intraday_move_pct": 0.1,
     # Don't repeat the same alert for the same ticker+type within this window
     "cooldown_minutes": 60,
 }
