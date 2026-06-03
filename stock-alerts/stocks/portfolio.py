@@ -52,6 +52,18 @@ OWNED = [
         "sell_target": 420.00,  # +16% from current, near 52w high of $404
         "stop_loss": 310.00,    # -14% from current
     },
+    {
+        "ticker": "NOK",        # Nokia — long-term hold
+        "buy_price": 17.00,     # current ~$17.11, 52w range $4–$17 (at 52w high)
+        "sell_target": 22.00,   # +29% from current
+        "stop_loss": 14.50,     # -15% from current, room to breathe for long-term hold
+    },
+    {
+        "ticker": "POET",       # POET Technologies
+        "buy_price": 14.51,     # 11am price on 2026-06-03, 52w range $3.87–$20.81
+        "sell_target": 20.00,   # +38% from buy, just below 52w high of $20.81
+        "stop_loss": 12.50,     # -14% from buy
+    },
 ]
 
 # Stocks you're watching to buy on a dip.
@@ -65,6 +77,12 @@ WATCHLIST = [
     #     "max_buy": 400.00,
     # },
 ]
+
+# Bot findings to silence — still tracked in scorecard, no price/dip alerts.
+# Add a ticker here to stop receiving ongoing price notifications for it.
+MUTED_FINDINGS = {
+    "GRCE",
+}
 
 # Alert behaviour (applies to all stocks above)
 ALERT_RULES = {

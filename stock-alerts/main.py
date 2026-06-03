@@ -6,7 +6,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from config import load_config
-from stocks.portfolio import OWNED, WATCHLIST, ALERT_RULES
+from stocks.portfolio import OWNED, WATCHLIST, ALERT_RULES, MUTED_FINDINGS
 from stocks.findings import load_findings
 from stocks.watcher import fetch_quotes
 from stocks.tracker import (update_tracking, write_scorecard, save_tracking,
@@ -137,7 +137,7 @@ def main() -> None:
     findings_watchlist = [
         {"ticker": f["ticker"], "buy_target": f.get("buy_target")}
         for f in findings
-        if f["ticker"] not in existing_tickers
+        if f["ticker"] not in existing_tickers and f["ticker"] not in MUTED_FINDINGS
     ]
     if findings_watchlist:
         logger.info("Watching %d bot finding(s): %s",
